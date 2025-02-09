@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unicorn Hunt Game</title>
+  <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
   <style>
     /* General Styles */
     body {
@@ -22,11 +23,13 @@
       overflow: auto;
       padding: 20px;
       box-sizing: border-box;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
     }
 
     .item {
       display: inline-block;
-      margin: 5px;
       width: 50px;
       height: 50px;
       text-align: center;
@@ -43,8 +46,16 @@
       transform: scale(1.1);
     }
 
-    .unicorn {
-      background-color: #ff6f61; /* Soft pink for the unicorn */
+    /* Ads Styling */
+    .ad-slot {
+      width: 100%;
+      height: 100px;
+      background-color: #dcdcdc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 5px 0;
+      border-radius: 4px;
     }
 
     /* Victory Popup */
@@ -127,6 +138,8 @@
       }
     }
   </style>
+  <!-- AMP Ad Script -->
+  <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
 </head>
 <body>
   <!-- Game Container -->
@@ -149,7 +162,7 @@
     let startTime = null;
     let unicornFound = false;
 
-    // Generate random items (ads and decoys)
+    // Generate random items (ads, unicorn, and decoys)
     function generateItems() {
       const numItems = 200; // Total number of items
       const items = [];
@@ -168,26 +181,42 @@
 
       // Create item elements
       items.forEach((item, index) => {
+        if (index !== 0 && index % 20 === 0) {
+          // Insert an ad slot every 20 items
+          createAdSlot();
+        }
+
         const element = document.createElement('div');
         element.classList.add('item');
         element.textContent = item.symbol;
 
         if (item.type === 'unicorn') {
-          element.classList.add('unicorn');
           element.addEventListener('click', handleUnicornClick);
         } else {
           element.addEventListener('click', handleDecoyClick);
         }
 
-        // Random position
-        const x = (index % 20) * 60; // 20 columns
-        const y = Math.floor(index / 20) * 60; // 20 rows
-        element.style.position = 'absolute';
-        element.style.left = `${x}px`;
-        element.style.top = `${y}px`;
-
         gameContainer.appendChild(element);
       });
+    }
+
+    // Create an ad slot
+    function createAdSlot() {
+      const adSlot = document.createElement('div');
+      adSlot.classList.add('ad-slot');
+
+      // AMP Ad Integration
+      const ampAd = document.createElement('amp-ad');
+      ampAd.setAttribute('width', '100vw');
+      ampAd.setAttribute('height', '320');
+      ampAd.setAttribute('type', 'adsense');
+      ampAd.setAttribute('data-ad-client', 'ca-pub-5677446941278195');
+      ampAd.setAttribute('data-ad-slot', '4461937888');
+      ampAd.setAttribute('data-auto-format', 'rspv');
+      ampAd.setAttribute('data-full-width', '');
+
+      adSlot.appendChild(ampAd);
+      gameContainer.appendChild(adSlot);
     }
 
     // Handle clicking the unicorn
