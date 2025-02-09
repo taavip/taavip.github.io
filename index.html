@@ -3,23 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Futuristic Infinite Ads & Unicorn Finder</title>
-  <meta name="description" content="A futuristic one-page website with an infinite ad ticker and a hidden object to find: the Unicorn. Integrated with Google AdSense for revenue.">
+  <title>Find the Hidden Unicorn</title>
+  <meta name="description" content="A playful website filled with ads where you must find the hidden unicorn. Click it to celebrate with an animation!">
   <meta name="google-adsense-account" content="ca-pub-5677446941278195">
   <!-- Google AdSense: Replace with your own ad client ID -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5677446941278195"
      crossorigin="anonymous"></script>
+  <!-- Google Consent Mode -->
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('consent', 'default', {
       'ad_storage': 'denied',
       'analytics_storage': 'denied'
     });
   </script>
+  <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+  <script async src="https://cdn-consent-tool.google.com/explore-consent/explorable-consent.js"></script>
+
   <style>
-    /* Reset and base styles */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Reset Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Body Styling */
     body {
       font-family: 'Roboto', sans-serif;
       color: #fff;
@@ -28,38 +39,46 @@
       animation: gradientShift 15s ease infinite;
       overflow-x: hidden;
     }
+
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
       100% { background-position: 0% 50%; }
     }
+
+    /* Header */
     header {
       background: rgba(0, 0, 0, 0.8);
       padding: 1rem;
       text-align: center;
       border-bottom: 1px solid #444;
     }
+
     header h1 {
       font-size: 2rem;
       animation: glow 2s ease-in-out infinite alternate;
     }
+
     @keyframes glow {
       from { text-shadow: 0 0 5px #ff4081; }
       to { text-shadow: 0 0 20px #ff4081; }
     }
-    /* Infinite ad ticker styling */
+
+    /* Infinite Ad Ticker */
     .ad-ticker {
       background: rgba(255, 255, 255, 0.1);
-      border-top: 1px solid rgba(255,255,255,0.2);
-      border-bottom: 1px solid rgba(255,255,255,0.2);
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
       overflow: hidden;
       white-space: nowrap;
       margin: 1rem 0;
     }
+
     .ad-ticker .ad-wrapper {
       display: inline-block;
       animation: scrollAds 25s linear infinite;
     }
+
     .ad-ticker .ad {
       display: inline-block;
       width: 180px;
@@ -72,60 +91,58 @@
       text-align: center;
       font-size: 1.2rem;
       color: #ff4081;
+      cursor: pointer;
     }
+
     @keyframes scrollAds {
       from { transform: translateX(0); }
       to { transform: translateX(-50%); }
     }
-    /* Content section */
-    .content {
-      padding: 2rem 1rem;
-      text-align: center;
-    }
-    /* Google AdSense container */
-    .adsense-container {
-      margin: 2rem auto;
-      max-width: 728px;
-      text-align: center;
-    }
-    /* The unique Unicorn finder button */
+
+    /* Unicorn Element */
     #unicorn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: #ff4081;
-      color: #fff;
-      padding: 12px 24px;
-      font-size: 1.2rem;
+      position: absolute;
+      top: calc(50vh - 60px);
+      left: calc(50vw - 60px);
+      width: 120px;
+      height: 120px;
+      background: url('https://via.placeholder.com/120/FF4081') no-repeat center center;
+      background-size: cover;
       border: none;
-      border-radius: 8px;
+      border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: transform 0.2s, opacity 0.2s;
+      transition: transform 0.2s ease, opacity 0.2s ease;
       z-index: 1000;
       opacity: 0.9;
     }
+
     #unicorn:hover {
       transform: scale(1.1);
       opacity: 1;
     }
-    /* Modal message styling */
+
+    /* Modal Message */
     .hidden-message {
       display: none;
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(0,0,0,0.9);
+      background: rgba(0, 0, 0, 0.9);
       color: #fff;
       padding: 2rem;
       border-radius: 10px;
       z-index: 2000;
       text-align: center;
     }
+
+    .hidden-message p {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
     .hidden-message button {
-      margin-top: 1rem;
-      padding: 8px 16px;
+      padding: 0.8rem 1.5rem;
       background: #ff4081;
       border: none;
       border-radius: 4px;
@@ -133,6 +150,7 @@
       color: #fff;
       font-size: 1rem;
     }
+
     /* Cookie Consent Modal */
     #cookieConsent {
       display: none;
@@ -140,22 +158,24 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(0,0,0,0.95);
+      background: rgba(0, 0, 0, 0.95);
       color: #fff;
       padding: 1rem;
       text-align: center;
       z-index: 3000;
       font-size: 0.9rem;
     }
+
     #cookieConsent button {
       margin: 0 8px;
-      padding: 8px 16px;
+      padding: 0.8rem 1.5rem;
       background: #ff4081;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       color: #fff;
     }
+
     #cookieConsent a {
       color: #ff4081;
       text-decoration: underline;
@@ -164,13 +184,12 @@
 </head>
 <body>
   <header>
-    <h1>Futuristic Infinite Ads & Unicorn Finder</h1>
+    <h1>Find the Hidden Unicorn</h1>
   </header>
 
-  <!-- Infinite ad ticker section -->
+  <!-- Infinite Ad Ticker -->
   <div class="ad-ticker">
     <div class="ad-wrapper">
-      <!-- Ad placeholders: duplicate a set for smooth infinite scrolling -->
       <div class="ad">Ad 1</div>
       <div class="ad">Ad 2</div>
       <div class="ad">Ad 3</div>
@@ -181,7 +200,7 @@
       <div class="ad">Ad 8</div>
       <div class="ad">Ad 9</div>
       <div class="ad">Ad 10</div>
-      <!-- Repeat for infinite effect -->
+      <!-- Duplicate for infinite effect -->
       <div class="ad">Ad 1</div>
       <div class="ad">Ad 2</div>
       <div class="ad">Ad 3</div>
@@ -195,29 +214,15 @@
     </div>
   </div>
 
-  <!-- Main content area -->
+  <!-- Main Content -->
   <div class="content">
-    <p>Welcome to our futuristic one-page website—where endless ads scroll seamlessly and a hidden object awaits discovery. Can you find the Unicorn?</p>
+    <p>Welcome to our website! Amidst these endless ads lies a hidden unicorn. Can you find it?</p>
   </div>
 
-  <!-- Google AdSense ad unit container -->
-  <div class="adsense-container">
-    <!-- Example AdSense ad code: replace with your own ad details -->
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-XXXXXXXXXXXX"
-         data-ad-slot="1234567890"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-         (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </div>
+  <!-- Hidden Unicorn -->
+  <div id="unicorn"></div>
 
-  <!-- The unique Unicorn finder button -->
-  <div id="unicorn">FIND UNICORN</div>
-
-  <!-- Hidden modal for Unicorn found message -->
+  <!-- Hidden Modal -->
   <div class="hidden-message" id="hidden-message">
     <p>Congratulations! You found the Unicorn!</p>
     <button onclick="closeMessage()">Close</button>
@@ -225,30 +230,40 @@
 
   <!-- Cookie Consent Modal -->
   <div id="cookieConsent">
-    <p>This website uses cookies to serve personalized ads in compliance with the GDPR and related laws in the EEA, UK, and Switzerland.
+    <p>This website uses cookies to serve personalized ads in compliance with GDPR and related laws.
        <a href="/privacy-policy" target="_blank">Learn more</a></p>
     <button onclick="acceptCookies()">Accept All</button>
     <button onclick="declineCookies()">Decline</button>
   </div>
 
-  <script defer>
+  <script>
     // Show the hidden Unicorn modal when clicked.
-    document.getElementById('unicorn').addEventListener('click', function() {
-      document.getElementById('hidden-message').style.display = 'block';
+    document.getElementById('unicorn').addEventListener('click', function () {
+      const message = document.getElementById('hidden-message');
+      message.style.display = 'block';
+      setTimeout(() => {
+        message.style.transform = 'scale(1.1)';
+        message.style.opacity = '1';
+      }, 100);
     });
+
     function closeMessage() {
-      document.getElementById('hidden-message').style.display = 'none';
+      const message = document.getElementById('hidden-message');
+      message.style.transform = 'scale(1)';
+      message.style.opacity = '0';
+      setTimeout(() => {
+        message.style.display = 'none';
+      }, 300);
     }
-    
+
     // Cookie Consent Management
     function showCookieConsent() {
-      // Check local storage for consent status; if not set, show consent modal.
       if (!localStorage.getItem('cookieConsent')) {
         document.getElementById('cookieConsent').style.display = 'block';
       }
     }
+
     function acceptCookies() {
-      // Update Google Consent Mode to grant permissions for ad and analytics storage.
       gtag('consent', 'update', {
         'ad_storage': 'granted',
         'analytics_storage': 'granted'
@@ -256,14 +271,14 @@
       localStorage.setItem('cookieConsent', 'accepted');
       document.getElementById('cookieConsent').style.display = 'none';
     }
+
     function declineCookies() {
-      // Leave the default state (denied).
       localStorage.setItem('cookieConsent', 'declined');
       document.getElementById('cookieConsent').style.display = 'none';
     }
-    
-    // Show the cookie consent modal after a short delay.
-    window.addEventListener('load', function() {
+
+    // Initialize Cookie Consent on Page Load
+    window.addEventListener('load', function () {
       setTimeout(showCookieConsent, 1000);
     });
   </script>
