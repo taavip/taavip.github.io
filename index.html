@@ -3,182 +3,155 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Infinite Unicorn Hunt</title>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5677446941278195"
-     crossorigin="anonymous"></script>
-  <div id="cookie-consent-banner">
-  <p>We use cookies to ensure you get the best experience on our website. <a href="/privacy-policy" target="_blank">Learn more</a>.</p>
-  <button onclick="acceptCookies()">Accept Cookies</button>
-  </div>
-
-  <script>
-    function acceptCookies() {
-      // Logic to handle cookie acceptance
-      document.getElementById('cookie-consent-banner').style.display = 'none';
-    }
-  </script>
+  <title>Game Page</title>
   <style>
+    /* General Styles */
     body {
       margin: 0;
-      padding: 0;
-      overflow: hidden; /* Prevent default scrollbars */
-      background-color: #f9f9fb;
       font-family: Arial, sans-serif;
-    }
-
-    .scroll-area {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: auto;
-    }
-
-    .container {
-      position: absolute;
-      top: -1000px;
-      left: -1000px;
-      width: 20000px; /* Large dimensions to simulate infinity */
-      height: 20000px;
-    }
-
-    .block {
-      display: inline-block;
-      margin: 10px;
-      border: 1px solid #ccc;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      line-height: 1.5;
-      font-size: 16px;
       color: #333;
+      line-height: 1.6;
     }
 
-    .unicorn {
-      position: absolute; /* Position the unicorn randomly */
-      width: 50px;
-      height: 50px;
-      font-size: 40px;
-      font-weight: bold;
-      color: #ff6f61; /* Soft pink for the unicorn */
-      cursor: pointer;
-    }
-
-    /* Confetti Effect */
-    .confetti {
+    /* Full-Page Ad */
+    .full-page-ad {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
+      background-color: #ffcc00; /* Bright yellow for the ad */
+      display: flex;
+      justify-content: center;
+      align-items: center;
       z-index: 1000;
+      transition: opacity 0.5s ease;
     }
 
-    .confetti div {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background-color: #ff6f61;
-      animation: fall linear infinite;
-      animation-duration: 5s;
+    .full-page-ad.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
-    @keyframes fall {
-      0% {
-        transform: translateY(-100vh);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh);
-        opacity: 0;
-      }
+    .ad-content {
+      text-align: center;
+      font-size: 2rem;
+      color: white;
+    }
+
+    /* Intro Popup */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent gray overlay */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .popup-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .popup-content h2 {
+      margin-bottom: 10px;
+    }
+
+    .popup-content p {
+      margin-bottom: 20px;
+    }
+
+    .popup-content button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .popup-content button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Cookie Consent Bar */
+    .cookie-consent-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      z-index: 1001;
+    }
+
+    .cookie-consent-bar a {
+      color: #3498db;
+      text-decoration: none;
+    }
+
+    .cookie-consent-bar a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="scroll-area">
-    <div class="container" id="container"></div>
-    <div class="unicorn" id="unicorn">🦄</div>
+  <!-- Full-Page Ad -->
+  <div class="full-page-ad" id="fullPageAd">
+    <div class="ad-content">This is a full-page ad! It will disappear soon...</div>
+  </div>
+
+  <!-- Intro Popup -->
+  <div class="popup-overlay" id="popupOverlay">
+    <div class="popup-content">
+      <h2>Welcome to the Game!</h2>
+      <p>This is a fun game where you need to achieve specific goals. Enjoy playing!</p>
+      <button onclick="closePopup()">Start Playing</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div style="padding: 20px;">
+    <h1>Game Page</h1>
+    <p>This is the main content of your game page.</p>
+  </div>
+
+  <!-- Cookie Consent Bar -->
+  <div class="cookie-consent-bar">
+    We use cookies to ensure you get the best experience on our website. <a href="/privacy-policy.html" target="_blank">Learn more</a> | 
+    <button onclick="acceptCookies()">Accept Cookies</button>
   </div>
 
   <script>
-    const container = document.getElementById('container');
-    const unicorn = document.getElementById('unicorn');
+    // Hide the full-page ad after 5 seconds
+    const fullPageAd = document.getElementById('fullPageAd');
+    setTimeout(() => {
+      fullPageAd.classList.add('hidden');
+    }, 5000);
 
-    // Generate random blocks dynamically as the user scrolls
-    let lastGeneratedY = 0;
-
-    function generateBlocks(startY, endY) {
-      for (let y = startY; y < endY; y += Math.floor(Math.random() * 200) + 100) {
-        for (let x = 0; x < 20000; x += Math.floor(Math.random() * 300) + 100) {
-          const block = document.createElement('div');
-          block.classList.add('block');
-
-          // Random size (square or rectangle)
-          const width = Math.floor(Math.random() * 150) + 50;
-          const height = Math.floor(Math.random() * 100) + 50;
-          block.style.width = `${width}px`;
-          block.style.height = `${height}px`;
-
-          // Minimal Scandinavian colors
-          const colors = ['#ffffff', '#f0f0f0', '#e0e0e0', '#d0d0d0'];
-          block.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-          // Random position
-          block.style.position = 'absolute';
-          block.style.left = `${x}px`;
-          block.style.top = `${y}px`;
-
-          // Add some text for variety
-          block.textContent = Math.random() > 0.5 ? '✨' : '';
-
-          container.appendChild(block);
-        }
-      }
-      lastGeneratedY = endY;
+    // Close the intro popup
+    function closePopup() {
+      const popupOverlay = document.getElementById('popupOverlay');
+      popupOverlay.style.display = 'none';
     }
 
-    // Place the unicorn at a random position
-    function placeUnicorn() {
-      const x = Math.floor(Math.random() * 19000);
-      const y = Math.floor(Math.random() * 19000);
-      unicorn.style.left = `${x}px`;
-      unicorn.style.top = `${y}px`;
+    // Handle cookie consent
+    function acceptCookies() {
+      const cookieBar = document.querySelector('.cookie-consent-bar');
+      cookieBar.style.display = 'none'; // Hide the bar after acceptance
+      alert('Cookies accepted!');
     }
-
-    // Initialize the game
-    generateBlocks(0, 2000); // Initial batch of blocks
-    placeUnicorn();
-
-    // Dynamically generate more blocks as the user scrolls
-    window.addEventListener('scroll', () => {
-      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-      if (scrollTop + window.innerHeight > lastGeneratedY) {
-        generateBlocks(lastGeneratedY, lastGeneratedY + 2000);
-      }
-    });
-
-    // Confetti effect when the unicorn is found
-    unicorn.addEventListener('click', () => {
-      alert('You found the unicorn! 🦄');
-
-      // Create confetti
-      const confettiContainer = document.createElement('div');
-      confettiContainer.classList.add('confetti');
-      document.body.appendChild(confettiContainer);
-
-      for (let i = 0; i < 100; i++) {
-        const piece = document.createElement('div');
-        piece.style.left = `${Math.random() * 100}%`;
-        piece.style.animationDelay = `${Math.random()}s`;
-        piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-        confettiContainer.appendChild(piece);
-      }
-
-      // Remove confetti after 5 seconds
-      setTimeout(() => {
-        document.body.removeChild(confettiContainer);
-      }, 5000);
-    });
   </script>
 </body>
 </html>
