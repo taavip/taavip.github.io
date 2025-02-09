@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Unicorn Hunt Game</title>
-  <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
   <style>
     /* General Styles */
     body {
@@ -23,17 +22,17 @@
       overflow: auto;
       padding: 20px;
       box-sizing: border-box;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
+      display: grid;
+      grid-template-columns: repeat(20, 60px); /* 20 columns */
+      grid-gap: 5px;
     }
 
     .item {
-      display: inline-block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       width: 50px;
       height: 50px;
-      text-align: center;
-      line-height: 50px;
       font-size: 24px;
       font-weight: bold;
       cursor: pointer;
@@ -48,8 +47,19 @@
 
     /* Ads Styling */
     .ad-slot {
-      width: 100%;
+      grid-column: span 20; /* Span full width */
       height: 100px;
+      background-color: #dcdcdc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 5px 0;
+      border-radius: 4px;
+    }
+
+    .ad-slot-column {
+      grid-row: span 20; /* Span full height */
+      width: 100px;
       background-color: #dcdcdc;
       display: flex;
       justify-content: center;
@@ -164,9 +174,18 @@
 
     // Generate random items (ads, unicorn, and decoys)
     function generateItems() {
-      const numItems = 200; // Total number of items
+      const numItems = 400; // Total number of items (larger gaming area)
       const items = [];
-      const symbols = ['⭐', '✨', '🔥', '❤️', '🎉']; // Decoy symbols
+      const symbols = const symbols = [
+    '⭐', '✨', '🔥', '❤️', '🎉',
+    '🌟', '💥', '🎵', '🌈', '📚',
+    '🎮', '🎯', '🎲', '🎨', '🎁',
+    '🚀', '🎈', '🏆', '🎶', '🌍',
+    '💡', '📐', '🔒', '🔑', '🛡️',
+    '⚔️', '⚗️', '🔬', '🤖', '🧬',
+    '📈', '📉', '📊', '💰', '💳',
+    '💎'
+  ]; // Decoy symbols
 
       // Add one unicorn
       items.push({ type: 'unicorn', symbol: '🦄' });
@@ -182,8 +201,13 @@
       // Create item elements
       items.forEach((item, index) => {
         if (index !== 0 && index % 20 === 0) {
-          // Insert an ad slot every 20 items
+          // Insert a row ad slot every 20 items
           createAdSlot();
+        }
+
+        if (index !== 0 && index % 10 === 0) {
+          // Insert a column ad slot every 10 items
+          createColumnAdSlot();
         }
 
         const element = document.createElement('div');
@@ -200,7 +224,7 @@
       });
     }
 
-    // Create an ad slot
+    // Create a row ad slot
     function createAdSlot() {
       const adSlot = document.createElement('div');
       adSlot.classList.add('ad-slot');
@@ -209,6 +233,25 @@
       const ampAd = document.createElement('amp-ad');
       ampAd.setAttribute('width', '100vw');
       ampAd.setAttribute('height', '320');
+      ampAd.setAttribute('type', 'adsense');
+      ampAd.setAttribute('data-ad-client', 'ca-pub-5677446941278195');
+      ampAd.setAttribute('data-ad-slot', '4461937888');
+      ampAd.setAttribute('data-auto-format', 'rspv');
+      ampAd.setAttribute('data-full-width', '');
+
+      adSlot.appendChild(ampAd);
+      gameContainer.appendChild(adSlot);
+    }
+
+    // Create a column ad slot
+    function createColumnAdSlot() {
+      const adSlot = document.createElement('div');
+      adSlot.classList.add('ad-slot-column');
+
+      // AMP Ad Integration
+      const ampAd = document.createElement('amp-ad');
+      ampAd.setAttribute('width', '320');
+      ampAd.setAttribute('height', '100vh');
       ampAd.setAttribute('type', 'adsense');
       ampAd.setAttribute('data-ad-client', 'ca-pub-5677446941278195');
       ampAd.setAttribute('data-ad-slot', '4461937888');
@@ -229,11 +272,8 @@
         // Show victory popup
         victoryPopup.classList.add('active');
 
-        // Trigger confetti effect
+        // Trigger continuous confetti effect
         createConfetti();
-
-        // Mark the unicorn as found
-        unicornFound = true;
       }
     }
 
@@ -251,7 +291,7 @@
       generateItems(); // Regenerate items
     }
 
-    // Create confetti effect
+    // Create continuous confetti effect
     function createConfetti() {
       const confettiContainer = document.createElement('div');
       confettiContainer.classList.add('confetti');
@@ -265,10 +305,12 @@
         confettiContainer.appendChild(piece);
       }
 
-      // Remove confetti after 5 seconds
-      setTimeout(() => {
-        document.body.removeChild(confettiContainer);
-      }, 5000);
+      // Remove confetti only when the game restarts
+      victoryPopup.addEventListener('transitionend', () => {
+        if (!victoryPopup.classList.contains('active')) {
+          document.body.removeChild(confettiContainer);
+        }
+      });
     }
 
     // Start the game
