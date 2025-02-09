@@ -9,6 +9,14 @@
   <!-- Google AdSense: Replace with your own ad client ID -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5677446941278195"
      crossorigin="anonymous"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+      'ad_storage': 'denied',
+      'analytics_storage': 'denied'
+    });
+  </script>
   <style>
     /* Reset and base styles */
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -125,6 +133,33 @@
       color: #fff;
       font-size: 1rem;
     }
+    /* Cookie Consent Modal */
+    #cookieConsent {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.95);
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+      z-index: 3000;
+      font-size: 0.9rem;
+    }
+    #cookieConsent button {
+      margin: 0 8px;
+      padding: 8px 16px;
+      background: #ff4081;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #fff;
+    }
+    #cookieConsent a {
+      color: #ff4081;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -188,14 +223,49 @@
     <button onclick="closeMessage()">Close</button>
   </div>
 
+  <!-- Cookie Consent Modal -->
+  <div id="cookieConsent">
+    <p>This website uses cookies to serve personalized ads in compliance with the GDPR and related laws in the EEA, UK, and Switzerland.
+       <a href="/privacy-policy" target="_blank">Learn more</a></p>
+    <button onclick="acceptCookies()">Accept All</button>
+    <button onclick="declineCookies()">Decline</button>
+  </div>
+
   <script defer>
-    // Show the hidden message when the "FIND UNICORN" button is clicked.
+    // Show the hidden Unicorn modal when clicked.
     document.getElementById('unicorn').addEventListener('click', function() {
       document.getElementById('hidden-message').style.display = 'block';
     });
     function closeMessage() {
       document.getElementById('hidden-message').style.display = 'none';
     }
+    
+    // Cookie Consent Management
+    function showCookieConsent() {
+      // Check local storage for consent status; if not set, show consent modal.
+      if (!localStorage.getItem('cookieConsent')) {
+        document.getElementById('cookieConsent').style.display = 'block';
+      }
+    }
+    function acceptCookies() {
+      // Update Google Consent Mode to grant permissions for ad and analytics storage.
+      gtag('consent', 'update', {
+        'ad_storage': 'granted',
+        'analytics_storage': 'granted'
+      });
+      localStorage.setItem('cookieConsent', 'accepted');
+      document.getElementById('cookieConsent').style.display = 'none';
+    }
+    function declineCookies() {
+      // Leave the default state (denied).
+      localStorage.setItem('cookieConsent', 'declined');
+      document.getElementById('cookieConsent').style.display = 'none';
+    }
+    
+    // Show the cookie consent modal after a short delay.
+    window.addEventListener('load', function() {
+      setTimeout(showCookieConsent, 1000);
+    });
   </script>
 </body>
 </html>
