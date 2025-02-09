@@ -1,14 +1,15 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Find the Hidden Unicorn</title>
   <meta name="description" content="A playful website filled with ads where you must find the hidden unicorn. Click it to celebrate with an animation!">
-  <meta name="google-adsense-account" content="ca-pub-5677446941278195">
-  <!-- Google AdSense: Replace with your own ad client ID -->
+
+  <!-- Google AdSense Script -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5677446941278195"
      crossorigin="anonymous"></script>
+
   <!-- Google Consent Mode -->
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -18,9 +19,6 @@
       'analytics_storage': 'denied'
     });
   </script>
-  <script async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
-  <script async src="https://cdn-consent-tool.google.com/explore-consent/explorable-consent.js"></script>
 
   <style>
     /* Reset Styles */
@@ -99,14 +97,28 @@
       to { transform: translateX(-50%); }
     }
 
+    /* Static Ads */
+    .static-ad {
+      display: inline-block;
+      width: 150px;
+      height: 150px;
+      background: #222;
+      border: 2px solid #444;
+      border-radius: 8px;
+      margin: 10px;
+      text-align: center;
+      line-height: 150px;
+      font-size: 1.2rem;
+      color: #ff4081;
+      cursor: pointer;
+    }
+
     /* Unicorn Element */
     #unicorn {
       position: absolute;
-      top: calc(50vh - 60px);
-      left: calc(50vw - 60px);
-      width: 120px;
-      height: 120px;
-      background: url('https://via.placeholder.com/120/FF4081') no-repeat center center;
+      width: 30px;
+      height: 30px;
+      background: url('https://via.placeholder.com/30/FF4081') no-repeat center center;
       background-size: cover;
       border: none;
       border-radius: 50%;
@@ -117,7 +129,7 @@
     }
 
     #unicorn:hover {
-      transform: scale(1.1);
+      transform: scale(1.2);
       opacity: 1;
     }
 
@@ -214,9 +226,19 @@
     </div>
   </div>
 
-  <!-- Main Content -->
+  <!-- Static Ads -->
   <div class="content">
     <p>Welcome to our website! Amidst these endless ads lies a hidden unicorn. Can you find it?</p>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center;">
+      <div class="static-ad">Ad</div>
+      <div class="static-ad">Ad</div>
+      <div class="static-ad">Ad</div>
+      <div class="static-ad">Ad</div>
+      <div class="static-ad">Ad</div>
+      <div class="static-ad">Ad</div>
+      <div class="static-ad">Ad</div>
+      <div class="static-ad">Ad</div>
+    </div>
   </div>
 
   <!-- Hidden Unicorn -->
@@ -232,11 +254,24 @@
   <div id="cookieConsent">
     <p>This website uses cookies to serve personalized ads in compliance with GDPR and related laws.
        <a href="/privacy-policy" target="_blank">Learn more</a></p>
-    <button onclick="acceptCookies()">Accept All</button>
-    <button onclick="declineCookies()">Decline</button>
+    <button onclick="acceptCookies()">Consent</button>
+    <button onclick="manageOptions()">Manage Options</button>
   </div>
 
   <script>
+    // Randomize Unicorn Position
+    document.addEventListener('DOMContentLoaded', function () {
+      const unicorn = document.getElementById('unicorn');
+      const bodyRect = document.body.getBoundingClientRect();
+      const unicornSize = 30;
+
+      const randomX = Math.floor(Math.random() * (bodyRect.width - unicornSize));
+      const randomY = Math.floor(Math.random() * (bodyRect.height - unicornSize));
+
+      unicorn.style.left = `${randomX}px`;
+      unicorn.style.top = `${randomY}px`;
+    });
+
     // Show the hidden Unicorn modal when clicked.
     document.getElementById('unicorn').addEventListener('click', function () {
       const message = document.getElementById('hidden-message');
@@ -272,8 +307,9 @@
       document.getElementById('cookieConsent').style.display = 'none';
     }
 
-    function declineCookies() {
-      localStorage.setItem('cookieConsent', 'declined');
+    function manageOptions() {
+      window.open('https://myaccount.google.com/adssettings', '_blank');
+      localStorage.setItem('cookieConsent', 'pending');
       document.getElementById('cookieConsent').style.display = 'none';
     }
 
