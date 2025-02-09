@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Game Page</title>
+  <title>Unicorn Hunt Game</title>
   <style>
     /* General Styles */
     body {
@@ -11,36 +11,44 @@
       font-family: Arial, sans-serif;
       color: #333;
       line-height: 1.6;
+      background-color: #f9f9fb;
+      overflow: hidden; /* Prevent default scrollbars */
     }
 
-    /* Full-Page Ad */
-    .full-page-ad {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: #ffcc00; /* Bright yellow for the ad */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      transition: opacity 0.5s ease;
+    .game-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: auto;
+      padding: 20px;
+      box-sizing: border-box;
     }
 
-    .full-page-ad.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .ad-content {
+    .item {
+      display: inline-block;
+      margin: 5px;
+      width: 50px;
+      height: 50px;
       text-align: center;
-      font-size: 2rem;
-      color: white;
+      line-height: 50px;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      background-color: #e0e0e0;
+      transition: transform 0.2s ease;
     }
 
-    /* Intro Popup */
-    .popup-overlay {
+    .item:hover {
+      transform: scale(1.1);
+    }
+
+    .unicorn {
+      background-color: #ff6f61; /* Soft pink for the unicorn */
+    }
+
+    /* Victory Popup */
+    .victory-popup {
       position: fixed;
       top: 0;
       left: 0;
@@ -50,14 +58,19 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      z-index: 1000;
+      display: none; /* Hidden by default */
+    }
+
+    .victory-popup.active {
+      display: flex;
     }
 
     .popup-content {
       background-color: white;
       padding: 20px;
       border-radius: 8px;
-      max-width: 600px;
+      max-width: 400px;
       text-align: center;
     }
 
@@ -83,75 +96,160 @@
       background-color: #0056b3;
     }
 
-    /* Cookie Consent Bar */
-    .cookie-consent-bar {
+    /* Confetti Effect */
+    .confetti {
       position: fixed;
-      bottom: 0;
+      top: 0;
       left: 0;
       width: 100%;
-      background-color: #2c3e50;
-      color: white;
-      text-align: center;
-      padding: 10px 0;
+      height: 100%;
+      pointer-events: none;
       z-index: 1001;
     }
 
-    .cookie-consent-bar a {
-      color: #3498db;
-      text-decoration: none;
+    .confetti div {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #ff6f61;
+      animation: fall linear infinite;
+      animation-duration: 5s;
     }
 
-    .cookie-consent-bar a:hover {
-      text-decoration: underline;
+    @keyframes fall {
+      0% {
+        transform: translateY(-100vh);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Full-Page Ad -->
-  <div class="full-page-ad" id="fullPageAd">
-    <div class="ad-content">This is a full-page ad! It will disappear soon...</div>
-  </div>
+  <!-- Game Container -->
+  <div class="game-container" id="gameContainer"></div>
 
-  <!-- Intro Popup -->
-  <div class="popup-overlay" id="popupOverlay">
+  <!-- Victory Popup -->
+  <div class="victory-popup" id="victoryPopup">
     <div class="popup-content">
-      <h2>Welcome to the Game!</h2>
-      <p>This is a fun game where you need to achieve specific goals. Enjoy playing!</p>
-      <button onclick="closePopup()">Start Playing</button>
+      <h2>Congratulations!</h2>
+      <p>You found the unicorn in <span id="timeTaken">XX</span> seconds!</p>
+      <button onclick="restartGame()">Play Again</button>
     </div>
   </div>
 
-  <!-- Main Content -->
-  <div style="padding: 20px;">
-    <h1>Game Page</h1>
-    <p>This is the main content of your game page.</p>
-  </div>
-
-  <!-- Cookie Consent Bar -->
-  <div class="cookie-consent-bar">
-    We use cookies to ensure you get the best experience on our website. <a href="/privacy-policy.html" target="_blank">Learn more</a> | 
-    <button onclick="acceptCookies()">Accept Cookies</button>
-  </div>
-
   <script>
-    // Hide the full-page ad after 5 seconds
-    const fullPageAd = document.getElementById('fullPageAd');
-    setTimeout(() => {
-      fullPageAd.classList.add('hidden');
-    }, 5000);
+    const gameContainer = document.getElementById('gameContainer');
+    const victoryPopup = document.getElementById('victoryPopup');
+    const timeTakenElement = document.getElementById('timeTaken');
 
-    // Close the intro popup
-    function closePopup() {
-      const popupOverlay = document.getElementById('popupOverlay');
-      popupOverlay.style.display = 'none';
+    let startTime = null;
+    let unicornFound = false;
+
+    // Generate random items (ads and decoys)
+    function generateItems() {
+      const numItems = 200; // Total number of items
+      const items = [];
+      const symbols = ['⭐', '✨', '🔥', '❤️', '🎉']; // Decoy symbols
+
+      // Add one unicorn
+      items.push({ type: 'unicorn', symbol: '🦄' });
+
+      // Add decoy symbols
+      for (let i = 0; i < numItems - 1; i++) {
+        items.push({ type: 'decoy', symbol: symbols[Math.floor(Math.random() * symbols.length)] });
+      }
+
+      // Shuffle the items array
+      items.sort(() => Math.random() - 0.5);
+
+      // Create item elements
+      items.forEach((item, index) => {
+        const element = document.createElement('div');
+        element.classList.add('item');
+        element.textContent = item.symbol;
+
+        if (item.type === 'unicorn') {
+          element.classList.add('unicorn');
+          element.addEventListener('click', handleUnicornClick);
+        } else {
+          element.addEventListener('click', handleDecoyClick);
+        }
+
+        // Random position
+        const x = (index % 20) * 60; // 20 columns
+        const y = Math.floor(index / 20) * 60; // 20 rows
+        element.style.position = 'absolute';
+        element.style.left = `${x}px`;
+        element.style.top = `${y}px`;
+
+        gameContainer.appendChild(element);
+      });
     }
 
-    // Handle cookie consent
-    function acceptCookies() {
-      const cookieBar = document.querySelector('.cookie-consent-bar');
-      cookieBar.style.display = 'none'; // Hide the bar after acceptance
-      alert('Cookies accepted!');
+    // Handle clicking the unicorn
+    function handleUnicornClick() {
+      if (!unicornFound) {
+        const endTime = Date.now();
+        const timeTaken = Math.floor((endTime - startTime) / 1000);
+        timeTakenElement.textContent = timeTaken;
+
+        // Show victory popup
+        victoryPopup.classList.add('active');
+
+        // Trigger confetti effect
+        createConfetti();
+
+        // Mark the unicorn as found
+        unicornFound = true;
+      }
     }
+
+    // Handle clicking decoy items
+    function handleDecoyClick() {
+      alert('Not the unicorn! Keep looking...');
+    }
+
+    // Restart the game
+    function restartGame() {
+      gameContainer.innerHTML = ''; // Clear the game container
+      victoryPopup.classList.remove('active'); // Hide the victory popup
+      unicornFound = false; // Reset the game state
+      startTime = Date.now(); // Reset the timer
+      generateItems(); // Regenerate items
+    }
+
+    // Create confetti effect
+    function createConfetti() {
+      const confettiContainer = document.createElement('div');
+      confettiContainer.classList.add('confetti');
+      document.body.appendChild(confettiContainer);
+
+      for (let i = 0; i < 100; i++) {
+        const piece = document.createElement('div');
+        piece.style.left = `${Math.random() * 100}%`;
+        piece.style.animationDelay = `${Math.random()}s`;
+        piece.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
+        confettiContainer.appendChild(piece);
+      }
+
+      // Remove confetti after 5 seconds
+      setTimeout(() => {
+        document.body.removeChild(confettiContainer);
+      }, 5000);
+    }
+
+    // Start the game
+    function startGame() {
+      startTime = Date.now(); // Start the timer
+      generateItems(); // Generate items
+    }
+
+    // Initialize the game
+    startGame();
   </script>
 </body>
 </html>
