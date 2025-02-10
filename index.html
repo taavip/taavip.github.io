@@ -12,7 +12,7 @@
       color: #333;
       line-height: 1.6;
       background-color: #f9f9fb;
-      overflow: hidden; /* Prevent default scrollbars */
+      overflow: hidden;
     }
 
     .game-container {
@@ -23,16 +23,13 @@
       padding: 20px;
       box-sizing: border-box;
       display: grid;
-      grid-template-columns: repeat(20, 60px); /* 20 columns */
-      grid-gap: 5px;
+      gap: 5px;
     }
 
     .item {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 50px;
-      height: 50px;
       font-size: 24px;
       font-weight: bold;
       cursor: pointer;
@@ -47,24 +44,10 @@
 
     /* Ads Styling */
     .ad-slot {
-      grid-column: span 20; /* Span full width */
-      height: 100px;
-      background-color: #dcdcdc;
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 5px 0;
-      border-radius: 4px;
-    }
-
-    .ad-slot-column {
-      grid-row: span 20; /* Span full height */
-      width: 100px;
       background-color: #dcdcdc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 5px 0;
       border-radius: 4px;
     }
 
@@ -75,12 +58,12 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent gray overlay */
+      background-color: rgba(0, 0, 0, 0.7);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1000;
-      display: none; /* Hidden by default */
+      display: none;
     }
 
     .victory-popup.active {
@@ -111,6 +94,7 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin: 5px;
     }
 
     .popup-content button:hover {
@@ -126,6 +110,7 @@
       height: 100%;
       pointer-events: none;
       z-index: 1001;
+      display: none;
     }
 
     .confetti div {
@@ -147,11 +132,64 @@
         opacity: 0;
       }
     }
+
+    /* Introduction Screen */
+    .intro-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: flex;
+    }
+
+    .intro-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .intro-content h2 {
+      margin-bottom: 10px;
+    }
+
+    .intro-content button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    .intro-content button:hover {
+      background-color: #0056b3;
+    }
   </style>
   <!-- AMP Ad Script -->
   <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
 </head>
 <body>
+  <!-- Introduction Screen -->
+  <div class="intro-screen" id="introScreen">
+    <div class="intro-content">
+      <h2>Welcome to Unicorn Hunt!</h2>
+      <p>Select a level to start:</p>
+      <button onclick="startGame(1)">Small (S)</button>
+      <button onclick="startGame(2)">Medium (M)</button>
+      <button onclick="startGame(3)">Large (L)</button>
+    </div>
+  </div>
+
   <!-- Game Container -->
   <div class="game-container" id="gameContainer"></div>
 
@@ -160,23 +198,68 @@
     <div class="popup-content">
       <h2>Congratulations!</h2>
       <p>You found the unicorn in <span id="timeTaken">XX</span> seconds!</p>
-      <button onclick="restartGame()">Play Again</button>
+      <button onclick="restartGame(1)">Play Again (S)</button>
+      <button onclick="restartGame(2)">Play Again (M)</button>
+      <button onclick="restartGame(3)">Play Again (L)</button>
     </div>
   </div>
 
   <script>
+    const config = {
+      levels: {
+        1: { columns: 20, rows: 20, numItems: 400 }, // Small (S)
+        2: { columns: 60, rows: 60, numItems: 3600 }, // Medium (M)
+        3: { columns: 200, rows: 200, numItems: 40000 } // Large (L)
+      },
+      adDimensions: [
+        { width: 1, height: 1 },
+        { width: 2, height: 1 },
+        { width: 1, height: 2 },
+        { width: 3, height: 2 },
+        { width: 4, height: 1 },
+        { width: 6, height: 3 },
+        { width: 7, height: 9 },
+        { width: 8, height: 4 },
+        { width: 5, height: 5 },
+        { width: 10, height: 2 }
+      ],
+      symbols: [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '⭐', '✨', '🔥', '❤️', '🎉', '🌟', '💥', '🎵', '🌈', '📚', '🎮', '🎯', '🎲', '🎨', '🎁', '🚀', '🎈', '🏆', '🎶', '🌍', '💡', '📐', '🔒', '🔑', 
+	  '🛡️', '⚔️', '⚗️', '🔬', '🤖', '🧬', '📈', '📉', '📊', '💰', '💳', '💎', '🍀', '🌙', '🍁', '🌻', '🌸', '🌺', '🌼', '🍓', '🍉', '🍇', '🍒', '🍍', '🥭', '🥑', 
+	  '🥥', '🥝', '🍄', '🌰', '🧃', '🍪', '🍩', '🍫', '🍬', '🥓', '🍔', '🍕', '🍜', '🍣', '🍱', '🍚', '🍿', '🍦', '🍩', '🥪', '🥞', '🍳', '🥚', '🍞', '🥖', '🧀', 
+	  '🍪', '🍫', '🍰', '🍠', '🌮', '🌯', '🥟', '🍜', '🍷', '🍺', '🍸', '🥂', '🥃', '🍾', '🥤', '🥧', '🌽', '🍅', '🥦', '🍆', '🥒', '🥕', '🌶️', '🍑', '🍈', '🍍', 
+	  '🥥', '🥝', '🍊', '🍋', '🍏', '🍎', '🍐', '🍒', '🍅', '🥥', '🍏', '🍎', '🍐', '🌰', '🥥', '🍍', '🥭', '🍓', '🧁', '🍪', '🍩', '🥧', '🍰', '🍫', '🍬', '🍿', 
+	  '🍪', '🎠', '🎡', '🎢', '🛹', '🚲', '🏍️', '🚗', '🚕', '🚓', '🚑', '🚒', '🚐', '🚚', '🚛', '🚜', '🚊', '🚉', '🚇', '🚉', '🚍', '🚔', '🛶', '🛳️', '🚢', '🚤', 
+	  '⛴️', '🛥️', '🚀', '🛸', '🛩️', '✈️', '🚁', '🛩️', '🛫', '🎯', '🎠', '🧸', '🎩', '👑', '💍', '👒', '🎽', '👚', '👕', '👗', '👖', '👠', '👡', '👢', '👞', '👟', 
+	  '🥿', '👑', '🧢', '🧣', '🧤', '🧥', '🧦', '🧧', '🎒', '👛', '👜', '💼', '👝', '👓', '🕶️', '🥽', '🦳', '🦸', '🦹', '🦦', '🦥', '🐉', '🦕', '🦖', '🦓', '🐾', 
+	  '🐈', '🐕', '🐄', '🐖', '🐏', '🐑', '🐐', '🐪', '🐫', '🐘', '🦛', '🦒', '🦓', '🦡', '🦨', '🦩', '🦦', '🦢', '🐦', '🦉', '🦜', '🦋', '🐜', '🐞', '🦗', 
+	  '🦠', '🦟', '🐜', '🐀', '🐁', '🐇', '🐹', '🐀', '🐭', '🐁', '🐇', '🐹', '🐺', '🐻', '🐼', '🐨', '🐯', '🦁', '🐆', '🐅', '🐊', '🐍', '🐳', '🐋', '🦈', '🐬', 
+	  '🐟', '🦞', '🦀', '🦐', '🦑', '🐙', '🦋', '🦟', '🦠', '🐝', '🦚', '🦜', '🐦', '🦉', '🦢', '🦦', '🦨', '🦡', '🦩', '🦦', '🦥', '🦒', '🦓', '🦘', '🦏', '🐫', 
+	  '🐪', '🐘', '🐆', '🦖', '🦕', '🦉', '🦜', '🦋', '🦚', '🐉', '🦦',  '🐯', '🦁', '🐉', '🦒', '🦙', '🦊', '🐦', '🦕', '🦖', '🐅', '🐆', '🐆', '🐒', '🐧', 
+	  '🐼', '🐱', '🦊', '🦘', '🦁', '🐮', '🐰', '🐺', '🐦', '🐱', '🐈', '🐩', '🐕', '🐅', '🐆', '🐈', '🐿️', '🐁', '🐇', '🐀', '🐍', '🐒', '🦝', '🦡', '🦥', '🦇', 
+	  '🦋', '🐌', '🦗', '🐝', '🦠', '🐞', '🦥', '🦘', '🦙', '🐍', '🐍', '🐊', '🐉', '🐧', '🐐', '🦦', '🦦', '🐧', '🐉', '🐊', '🐢', '🐍', '🐉', '🦆', '🦑', 
+	  '🦞', '🦀', '🦐', '🦪', '🦠', '🐡', '🐋', '🐳', '🐬', '🐟', '🐙', '🦋', '🦜', '🦢', '🐦', '🦉', '🦚', '🐦', '🦩', '🐿️', '🐇', '🐁', '🐰', '🐹', '🐭', '🐀', 
+	  '🐿️', '🐾', '🐻', '🐼', '🐨', '🦊', '🦁', '🦍', '🦦', '🦥', '🦢', '🦢', '🐾', '🦓', '🦁', '🦊', '🦨', '🦥', '🦦', '🦕', '🦖', '🦒', '🦗', '🦠', 
+	  '🦝', '🦡', '🐺', '🐅', '🐂', '🐏', '🐑', '🦙', '🦘', '🦦', '🦝', '🐰', '🐇', '🦊', '🦀', '🦐']
+    };
+
     const gameContainer = document.getElementById('gameContainer');
     const victoryPopup = document.getElementById('victoryPopup');
     const timeTakenElement = document.getElementById('timeTaken');
+    const introScreen = document.getElementById('introScreen');
 
-    let startTime = null;
-    let unicornFound = false;
+    let state = {
+      level: 1,
+      startTime: null,
+      unicornFound: false,
+      confettiActive: false,
+      visibleItems: new Set()
+    };
 
     // Generate random items (ads, unicorn, and decoys)
-    function generateItems() {
-      const numItems = 400; // Total number of items (larger gaming area)
+    function generateItems(level) {
+      const { columns, rows, numItems } = config.levels[level];
       const items = [];
-      const symbols = const symbols = ['⭐', '✨', '🔥', '❤️', '🎉', '🌟', '💥', '🎵', '🌈', '📚', '🎮', '🎯', '🎲', '🎨', '🎁', '🚀', '🎈', '🏆', '🎶', '🌍',  '💡', '📐', '🔒', '🔑', '🛡️',  '⚔️', '⚗️', '🔬', '🤖', '🧬',  '📈', '📉', '📊', '💰', '💳', '💎' ]; // Decoy symbols
+      const symbols = [...config.symbols];
 
       // Add one unicorn
       items.push({ type: 'unicorn', symbol: '🦄' });
@@ -189,20 +272,24 @@
       // Shuffle the items array
       items.sort(() => Math.random() - 0.5);
 
-      // Create item elements
-      items.forEach((item, index) => {
-        if (index !== 0 && index % 20 === 0) {
-          // Insert a row ad slot every 20 items
-          createAdSlot();
-        }
+      // Clear previous content
+      gameContainer.innerHTML = '';
+      gameContainer.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+      gameContainer.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-        if (index !== 0 && index % 10 === 0) {
-          // Insert a column ad slot every 10 items
-          createColumnAdSlot();
+      // Create item elements
+      let adIndex = 0;
+      items.forEach((item, index) => {
+        if (index !== 0 && index % Math.floor(numItems / 10) === 0) {
+          // Insert an ad slot
+          const adSlot = createAdSlot(config.adDimensions[adIndex % config.adDimensions.length], columns);
+          gameContainer.appendChild(adSlot);
+          adIndex++;
         }
 
         const element = document.createElement('div');
         element.classList.add('item');
+        element.dataset.index = index; // Store index for virtualization
         element.textContent = item.symbol;
 
         if (item.type === 'unicorn') {
@@ -212,18 +299,30 @@
         }
 
         gameContainer.appendChild(element);
+
+        // For Level 3, use virtualization
+        if (level === 3) {
+          state.visibleItems.add(index); // Track visible items
+        }
       });
+
+      // Virtualization for Level 3
+      if (level === 3) {
+        observeScroll();
+      }
     }
 
-    // Create a row ad slot
-    function createAdSlot() {
+    // Create an ad slot
+    function createAdSlot(dimensions, columns) {
       const adSlot = document.createElement('div');
       adSlot.classList.add('ad-slot');
+      adSlot.style.gridColumn = `span ${dimensions.width}`;
+      adSlot.style.gridRow = `span ${dimensions.height}`;
 
       // AMP Ad Integration
       const ampAd = document.createElement('amp-ad');
-      ampAd.setAttribute('width', '100vw');
-      ampAd.setAttribute('height', '320');
+      ampAd.setAttribute('width', dimensions.width * 50); // Adjust size based on grid units
+      ampAd.setAttribute('height', dimensions.height * 50);
       ampAd.setAttribute('type', 'adsense');
       ampAd.setAttribute('data-ad-client', 'ca-pub-5677446941278195');
       ampAd.setAttribute('data-ad-slot', '4461937888');
@@ -231,40 +330,24 @@
       ampAd.setAttribute('data-full-width', '');
 
       adSlot.appendChild(ampAd);
-      gameContainer.appendChild(adSlot);
-    }
-
-    // Create a column ad slot
-    function createColumnAdSlot() {
-      const adSlot = document.createElement('div');
-      adSlot.classList.add('ad-slot-column');
-
-      // AMP Ad Integration
-      const ampAd = document.createElement('amp-ad');
-      ampAd.setAttribute('width', '320');
-      ampAd.setAttribute('height', '100vh');
-      ampAd.setAttribute('type', 'adsense');
-      ampAd.setAttribute('data-ad-client', 'ca-pub-5677446941278195');
-      ampAd.setAttribute('data-ad-slot', '4461937888');
-      ampAd.setAttribute('data-auto-format', 'rspv');
-      ampAd.setAttribute('data-full-width', '');
-
-      adSlot.appendChild(ampAd);
-      gameContainer.appendChild(adSlot);
+      return adSlot;
     }
 
     // Handle clicking the unicorn
     function handleUnicornClick() {
-      if (!unicornFound) {
+      if (!state.unicornFound) {
         const endTime = Date.now();
-        const timeTaken = Math.floor((endTime - startTime) / 1000);
+        const timeTaken = Math.floor((endTime - state.startTime) / 1000);
         timeTakenElement.textContent = timeTaken;
 
         // Show victory popup
         victoryPopup.classList.add('active');
 
-        // Trigger continuous confetti effect
-        createConfetti();
+        // Trigger confetti animation
+        if (!state.confettiActive) {
+          createConfetti();
+          state.confettiActive = true;
+        }
       }
     }
 
@@ -274,21 +357,23 @@
     }
 
     // Restart the game
-    function restartGame() {
+    function restartGame(level) {
       gameContainer.innerHTML = ''; // Clear the game container
       victoryPopup.classList.remove('active'); // Hide the victory popup
-      unicornFound = false; // Reset the game state
-      startTime = Date.now(); // Reset the timer
-      generateItems(); // Regenerate items
+      state.unicornFound = false; // Reset the game state
+      state.confettiActive = false; // Reset confetti state
+      state.visibleItems.clear(); // Clear visible items for Level 3
+      state.startTime = Date.now(); // Reset the timer
+      generateItems(level); // Regenerate items for the selected level
     }
 
-    // Create continuous confetti effect
+    // Create confetti effect
     function createConfetti() {
       const confettiContainer = document.createElement('div');
       confettiContainer.classList.add('confetti');
       document.body.appendChild(confettiContainer);
 
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 50; i++) { // Reduced confetti count for performance
         const piece = document.createElement('div');
         piece.style.left = `${Math.random() * 100}%`;
         piece.style.animationDelay = `${Math.random()}s`;
@@ -296,22 +381,63 @@
         confettiContainer.appendChild(piece);
       }
 
-      // Remove confetti only when the game restarts
+      // Remove confetti when the victory popup is closed
       victoryPopup.addEventListener('transitionend', () => {
         if (!victoryPopup.classList.contains('active')) {
           document.body.removeChild(confettiContainer);
+          state.confettiActive = false;
         }
       });
     }
 
     // Start the game
-    function startGame() {
-      startTime = Date.now(); // Start the timer
-      generateItems(); // Generate items
+    function startGame(level) {
+      introScreen.style.display = 'none'; // Hide the introduction screen
+      state.level = level;
+      state.startTime = Date.now();
+      generateItems(level);
     }
 
     // Initialize the game
-    startGame();
+    function initializeGame() {
+      introScreen.style.display = 'flex'; // Show the introduction screen
+    }
+
+    // Virtualization for Level 3
+    function observeScroll() {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = entry.target.dataset.index;
+            if (!state.visibleItems.has(index)) {
+              state.visibleItems.add(index);
+              entry.target.style.visibility = 'visible';
+            }
+          } else {
+            const index = entry.target.dataset.index;
+            if (state.visibleItems.has(index)) {
+              state.visibleItems.delete(index);
+              entry.target.style.visibility = 'hidden';
+            }
+          }
+        });
+      }, { threshold: 0.1 });
+
+      gameContainer.querySelectorAll('.item').forEach((item) => {
+        observer.observe(item);
+      });
+    }
+
+    // Disable Ctrl + F
+    document.addEventListener('keydown', (event) => {
+      if (event.ctrlKey && event.key === 'f') {
+        event.preventDefault(); // Prevent default behavior
+        alert("Searching is disabled! Find the unicorn manually.");
+      }
+    });
+
+    // Initialize the game
+    initializeGame();
   </script>
 </body>
 </html>
